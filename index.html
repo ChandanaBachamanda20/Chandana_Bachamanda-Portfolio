@@ -554,6 +554,60 @@
     font-size:0.78rem;
     color:var(--teal);
   }
+  .cert-card{
+    cursor:pointer;
+  }
+  .cert-card .view-hint{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    color:var(--slate);
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .cert-card .view-hint svg{
+    width:12px; height:12px;
+    stroke:var(--slate);
+  }
+  .cert-card:hover .view-hint{ color:var(--teal); }
+  .cert-card:hover .view-hint svg{ stroke:var(--teal); }
+
+  /* ===================== LIGHTBOX ===================== */
+  .lightbox-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(19,26,43,0.82);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:200;
+    padding:32px;
+  }
+  .lightbox-overlay.open{ display:flex; }
+  .lightbox-content{
+    position:relative;
+    max-width:min(900px, 100%);
+    max-height:100%;
+  }
+  .lightbox-content img{
+    width:100%;
+    max-height:85vh;
+    object-fit:contain;
+    border-radius:10px;
+    background:#fff;
+  }
+  .lightbox-close{
+    position:absolute;
+    top:-44px; right:0;
+    width:36px; height:36px;
+    border-radius:50%;
+    background:var(--ink-soft);
+    border:1px solid var(--hairline-dark);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .lightbox-close svg{ width:18px; height:18px; stroke:#fff; }
 
   /* ===================== EMPTY STATES ===================== */
   .empty-state{
@@ -1027,30 +1081,43 @@
       <h2>Certifications</h2>
     </div>
     <div class="grid grid-3">
-      <div class="card cert-card">
+      <div class="card cert-card" onclick="openCertLightbox('cert-ibm-python.png')">
         <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
         <div>
           <h3>Data Analysis with Python</h3>
           <div class="issuer">IBM</div>
+          <div class="view-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3 14 10"/><path d="M3 21l7-7"/></svg> View certificate</div>
         </div>
       </div>
-      <div class="card cert-card">
+      <div class="card cert-card" onclick="openCertLightbox('cert-tata-dataviz.png')">
         <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
         <div>
           <h3>Data Visualisation: Empowering Business with Effective Insights</h3>
           <div class="issuer">Tata</div>
+          <div class="view-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3 14 10"/><path d="M3 21l7-7"/></svg> View certificate</div>
         </div>
       </div>
-      <div class="card cert-card">
+      <div class="card cert-card" onclick="openCertLightbox('cert-tata-genai.jpeg')">
         <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
         <div>
           <h3>GenAI Powered Data Analytics Job Simulation</h3>
           <div class="issuer">Tata</div>
+          <div class="view-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3 14 10"/><path d="M3 21l7-7"/></svg> View certificate</div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ============ CERTIFICATE LIGHTBOX ============ -->
+<div class="lightbox-overlay" id="certLightbox" onclick="closeCertLightbox(event)">
+  <div class="lightbox-content" onclick="event.stopPropagation()">
+    <div class="lightbox-close" onclick="closeCertLightbox(event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <img id="certLightboxImg" src="" alt="Certificate preview">
+  </div>
+</div>
 
 <!-- ============ CAREER GOALS ============ -->
 <section id="career-goals">
@@ -1118,6 +1185,23 @@
     });
   }, { threshold: 0.3 });
   fills.forEach(el => observer.observe(el));
+
+  // Certificate lightbox
+  function openCertLightbox(src) {
+    const overlay = document.getElementById('certLightbox');
+    const img = document.getElementById('certLightboxImg');
+    img.src = src;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCertLightbox(e) {
+    const overlay = document.getElementById('certLightbox');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCertLightbox(e);
+  });
 </script>
 
 </body>
